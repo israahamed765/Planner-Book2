@@ -1,0 +1,6 @@
+{
+  "name": "Boho Digital Planner",
+  "description": "An elegant, high-fidelity Bohemian designed Digital Notebook Planner featuring virtual clock alignment, daily scheduling, checklist tasks, and interactive water/habit logs with full history tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

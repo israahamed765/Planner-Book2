@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Explicit mapping of custom css properties to tailwind key names */
+  --color-primary: var(--theme-primary, #8C6A5C);
+  --color-secondary: var(--theme-secondary, #d36b54);
+  --color-tertiary: var(--theme-tertiary, #8da698);
+  --color-tertiary-container: var(--theme-tertiary-container, #fcf8f2);
+  --color-on-primary: var(--theme-on-primary, #ffffff);
+  --color-on-secondary: var(--theme-on-secondary, #ffffff);
+  --color-bg-page: var(--theme-bg, #FAF6F0);
+  --color-sidebar-bg: var(--theme-sidebar, #EFE8DC);
+  --color-active-tab: var(--theme-active-tab, #FFFBF6);
+  --color-theme-border: var(--theme-border, #DECDB3);
+}
+
+/* Custom styling to support ruled vintage journal page lines for the gratitude text area */
+.journal-ruled-lines {
+  background-image: linear-gradient(rgba(140, 106, 92, 0.08) 1px, transparent 1px);
+  background-size: 100% 2rem;
+  line-height: 2rem;
+}
