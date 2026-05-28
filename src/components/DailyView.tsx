@@ -39,22 +39,15 @@ export default function DailyView() {
     toggleFocusCompleted,
     openAddModal,
     openEditModal,
-    addToast
+    addToast,
+    dailyImage,
+    saveDailyImage,
+    deleteDailyImage
   } = usePlanner();
 
   // Local task creator state
   const [newQuickTaskTitle, setNewQuickTaskTitle] = useState('');
   const [isPriorityForQuickTask, setIsPriorityForQuickTask] = useState(false);
-
-  // Digital memory memory/vision photo state
-  const [dailyImage, setDailyImage] = useState<string>(() => {
-    return localStorage.getItem(`aura_daily_image_${currentDate}`) || '';
-  });
-
-  // Keep snapshot synced with current calendar dates
-  React.useEffect(() => {
-    setDailyImage(localStorage.getItem(`aura_daily_image_${currentDate}`) || '');
-  }, [currentDate]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -62,30 +55,27 @@ export default function DailyView() {
     
     // Safety check size to prevent browser local storage quota issues (< 1MB)
     if (file.size > 1024 * 1024) {
-      addToast('الرجاء رفع صورة بحجم أصغر من 1 ميجابايت لتناسب سعة المتصفح التخزينية! 📸⚠️', 'error');
+      addToast('Please upload an image smaller than 1MB to align with browser storage capacity! 📸⚠️', 'error');
       return;
     }
     
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64 = reader.result as string;
-      setDailyImage(base64);
-      localStorage.setItem(`aura_daily_image_${currentDate}`, base64);
-      addToast('تم تزيين تخطيطك اليومي بالصورة بنجاح! 🌸✨', 'success');
+      saveDailyImage(base64);
+      addToast('Decorated your daily planner with a memory photo! 🌸✨', 'success');
     };
     reader.readAsDataURL(file);
   };
 
   const handleSelectPreset = (url: string) => {
-    setDailyImage(url);
-    localStorage.setItem(`aura_daily_image_${currentDate}`, url);
-    addToast('تم اختيار لقطة فنية دافئة لليوم! 🎨🌿', 'success');
+    saveDailyImage(url);
+    addToast('Decorated your planner with an aesthetic scene! 🎨🌿', 'success');
   };
 
   const handleClearImage = () => {
-    setDailyImage('');
-    localStorage.removeItem(`aura_daily_image_${currentDate}`);
-    addToast('تمت إزالة صورة اليوم تماماً 🗑️', 'info');
+    deleteDailyImage();
+    addToast('Removed daily memory photo completely 🗑️', 'info');
   };
 
   // Filter tasks for current simulated date
@@ -109,23 +99,6 @@ export default function DailyView() {
       });
     } catch {
       return currentDate;
-    }
-  };
-
-  // Arabic translated month/day header as supportive title
-  const getArabicBohoHeader = () => {
-    const dayNames: Record<string, string> = {
-      'Sunday': 'الأحد', 'Monday': 'الأثنين', 'Tuesday': 'الثلاثاء', 
-      'Wednesday': 'الأربعاء', 'Thursday': 'الخميس', 'Friday': 'الجمعة', 'Saturday': 'السبت'
-    };
-    try {
-      const parsed = parseLocalDate(currentDate);
-      if (isNaN(parsed.getTime())) return 'التخطيط اليومي الأنيق';
-      const englishDay = parsed.toLocaleDateString('en-US', { weekday: 'long' });
-      const arDay = dayNames[englishDay] || 'يوم جديد';
-      return `${arDay} | مفكرة التخطيط اليومي`;
-    } catch {
-      return 'تخطيطك الأنيق لليوم';
     }
   };
 
@@ -158,7 +131,7 @@ export default function DailyView() {
             {getFormattedBohoDate()}
           </h1>
           <p className="font-sans text-xs text-primary font-semibold mt-1">
-            {getArabicBohoHeader()}
+            Boho Creative Digital Journal Workspace
           </p>
         </div>
         
@@ -188,17 +161,17 @@ export default function DailyView() {
               <div>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-[#d36b54] flex items-center gap-1">
                   <Sparkles size={11} className="animate-pulse" />
-                  Today's Intent • النية اليومية
+                  Today's Intent
                 </span>
                 <h3 className="font-serif text-xl font-extrabold text-primary mt-1 tracking-tight">
-                  التركيز الرئيسي لليوم
+                  Core Daily Focus
                 </h3>
               </div>
               <button 
                 onClick={() => openAddModal('focus')}
                 className="text-[10px] md:text-xs font-bold bg-white hover:bg-white/80 text-secondary border border-secondary/20 px-3 py-1.5 rounded-full cursor-pointer transition-colors shadow-sm"
               >
-                تحديث النية • Change Intent
+                Change Intent
               </button>
             </div>
 
@@ -207,7 +180,7 @@ export default function DailyView() {
                 <button
                   onClick={toggleFocusCompleted}
                   className="p-1.5 rounded-full text-[#d36b54] hover:bg-tertiary-container cursor-pointer transition-colors shrink-0"
-                  title="تغيير حالة الإنجاز"
+                  title="Toggle completed state"
                 >
                   {focusItem.completed ? (
                     <CheckSquare size={24} className="stroke-[2] text-[#8da698]" />
@@ -225,7 +198,7 @@ export default function DailyView() {
                     </span>
                     {focusItem.completed && (
                       <span className="text-[9px] font-bold text-[#8da698] px-2 py-0.5 bg-emerald-50 rounded-full border border-emerald-100 flex items-center gap-1">
-                        ✓ مكتمل
+                        ✓ Completed
                       </span>
                     )}
                   </div>
@@ -235,13 +208,13 @@ export default function DailyView() {
               {focusItem.isPriority && (
                 <span className="bg-tertiary-container text-secondary text-[9px] font-bold px-3 py-1 rounded-full border border-theme-border/40 select-none flex items-center gap-1 shrink-0 animate-bounce">
                   <Sparkles size={11} className="fill-secondary/20" />
-                  أولوية عظمى
+                  High Priority
                 </span>
               )}
             </div>
           </div>
 
-          {/* Daily Schedule - التخطيط الزمني */}
+          {/* Daily Schedule - Timetable */}
           <div className="bg-white/80 backdrop-blur border border-stone-200/50 rounded-[2rem] p-6 shadow-sm shadow-stone-200/10">
             <div className="flex items-center justify-between mb-5">
               <div>
@@ -249,7 +222,7 @@ export default function DailyView() {
                   Daily Timetable
                 </h3>
                 <p className="font-sans text-[10px] text-stone-400 mt-0.5">
-                  جدول الخطط وساعات يومك المجدولة مرتبة زمنياً
+                  Hourly planning outline organized chronological order
                 </p>
               </div>
               <button
@@ -258,7 +231,7 @@ export default function DailyView() {
                 id="btn-add-hourly-plan"
               >
                 <Plus size={13} className="text-primary" />
-                <span>اضف خطة • Add Hourly Plan</span>
+                <span>Add Hourly Plan</span>
               </button>
             </div>
 
@@ -268,7 +241,7 @@ export default function DailyView() {
                 <div className="py-12 text-center bg-[#FAF8F5]/50 border border-dashed border-stone-200/60 rounded-2xl">
                   <Clock className="mx-auto text-stone-300 stroke-[1.2] mb-2" size={32} />
                   <p className="font-serif font-medium text-sm text-stone-500">No schedule slot added for today</p>
-                  <p className="font-sans text-[10px] text-stone-400 mt-0.5">اضغط على زر الإضافة لتخطيط جدول ساعات يومك</p>
+                  <p className="font-sans text-[10px] text-stone-400 mt-0.5">Add hourly elements to plan your daytime</p>
                 </div>
               ) : (
                 todaysSchedules.map((slot) => (
@@ -322,10 +295,10 @@ export default function DailyView() {
               </div>
               <div className="text-left">
                 <h3 className="font-serif text-lg font-extrabold text-primary leading-snug">
-                  Immersive Daily Gratitude • مساحة الامتنان
+                  Immersive Daily Gratitude
                 </h3>
                 <p className="font-sans text-[10.5px] text-stone-500 font-medium">
-                  اكتب ٣ أشياء ممتن لوجودها اليوم لتوثيق الطمأنينة والسكينة
+                  Log 3 beautiful things you are grateful for today to cultivate peace
                 </p>
               </div>
             </div>
@@ -335,7 +308,7 @@ export default function DailyView() {
               <textarea
                 value={gratitude}
                 onChange={(e) => updateGratitude(e.target.value)}
-                placeholder="اليوم أنا ممتن لـ... I am deeply grateful for..."
+                placeholder="Today I am deeply grateful for..."
                 rows={4}
                 className="w-full bg-tertiary-container border border-theme-border/50 rounded-2.5xl pl-11 pr-5 py-3 text-xs leading-[2rem] text-stone-800 font-serif focus:ring-2 focus:ring-secondary/15 focus:border-secondary/40 outline-none resize-none placeholder-stone-400/85 shadow-inner journal-ruled-lines font-medium"
               />
@@ -351,10 +324,10 @@ export default function DailyView() {
           <div className="bg-white/80 backdrop-blur border border-stone-200/50 rounded-[2rem] p-6 shadow-sm shadow-stone-200/10">
             <div>
               <h3 className="font-serif text-lg font-bold text-stone-800">
-                Today's Habits • عادات اليوم
+                Today's Habits
               </h3>
               <p className="font-sans text-[10px] text-stone-400 mt-0.5">
-                متابعة وإنجاز عادات وعافية الجسد والروح لليوم
+                Nurture your daily rituals and wholesome wellness trace
               </p>
             </div>
 
@@ -385,14 +358,14 @@ export default function DailyView() {
                         <button
                           onClick={() => decrementHabit(h.id)}
                           className="p-1 text-stone-400 hover:text-stone-700 hover:bg-white rounded cursor-pointer transition-colors"
-                          title="تقليل"
+                          title="Decrease"
                         >
                           <Minus size={11} />
                         </button>
                         <button
                           onClick={() => incrementHabit(h.id)}
                           className="p-1 text-primary hover:text-stone-800 hover:bg-white rounded cursor-pointer transition-colors"
-                          title="زيادة"
+                          title="Increase"
                         >
                           <Plus size={11} />
                         </button>
@@ -405,7 +378,7 @@ export default function DailyView() {
                       </h4>
                       <p className="text-[10px] text-stone-500 font-mono mt-0.5 flex items-center justify-between">
                         <span>{h.count} / {h.target} <span className="text-stone-400 text-[9px]">{h.unit}</span></span>
-                        {isCompleted && <span className="text-[10px] text-emerald-600 font-bold">✓ عظيم</span>}
+                        {isCompleted && <span className="text-[10px] text-emerald-600 font-bold">✓ Great</span>}
                       </p>
                     </div>
 
@@ -434,10 +407,10 @@ export default function DailyView() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="font-serif text-lg font-extrabold text-[#8C6A5C] leading-none">
-                  Memory Board • لقطة اليوم التذكارية
+                  Memory Board
                 </h3>
                 <p className="font-sans text-[10px] text-stone-400 mt-1">
-                  وثّق لحظات يومك برؤية بصرية تذكارية باهرة
+                  Document cozy glances of your day in polaroid layout
                 </p>
               </div>
               {dailyImage && (
@@ -445,7 +418,7 @@ export default function DailyView() {
                   onClick={handleClearImage}
                   className="text-[9px] font-bold text-rose-500 hover:text-rose-700 bg-white border border-rose-100 px-2.5 py-1 rounded-full cursor-pointer shadow-sm transition-colors"
                 >
-                  إزالة الصورة
+                  Remove Photo
                 </button>
               )}
             </div>
@@ -482,7 +455,7 @@ export default function DailyView() {
                     📸
                   </div>
                   <span className="font-serif font-extrabold text-xs text-[#8C6A5C] mt-2 block">
-                    اضغط هنا لرفع صورتك التذكارية
+                    Upload beautiful daily photo
                   </span>
                   <span className="text-[9px] text-stone-400 mt-1 font-mono">
                     JPG, PNG (under 1MB)
@@ -492,7 +465,7 @@ export default function DailyView() {
                 {/* Preset aesthetic nature backgrounds */}
                 <div>
                   <span className="text-[9px] font-bold uppercase tracking-wider text-stone-400 block mb-2 text-left">
-                    أو اختر ملصق خلفي معبر • Quick Aesthetic Presets
+                    Quick Aesthetic Presets
                   </span>
                   <div className="flex gap-2.5">
                     {[
@@ -522,7 +495,7 @@ export default function DailyView() {
                   Daily Checklist
                 </h3>
                 <p className="font-sans text-[10px] text-stone-400 mt-0.5">
-                  قائمة المهام اليومية مع تصنيف الأهمية
+                  Action lists for the day with priority indicators
                 </p>
               </div>
               <span className="text-[10px] font-mono bg-[#FAF1E6] text-[#8C6A5C] font-bold px-2 py-0.5 rounded border border-[#EDE1D2]">
@@ -565,7 +538,7 @@ export default function DailyView() {
               {priorityTasks.length > 0 && (
                 <div>
                   <h4 className="text-[10px] font-bold uppercase text-rose-500 flex items-center gap-1 mb-2">
-                    <span>⭐</span> High Priority • مهام عاجلة
+                    <span>⭐</span> High Priority Tasks
                   </h4>
                   <div className="space-y-2.5">
                     {priorityTasks.map((t) => (
@@ -604,7 +577,7 @@ export default function DailyView() {
               {/* Standard Tasks stack */}
               <div>
                 <h4 className="text-[10px] font-bold uppercase text-stone-400 flex items-center gap-1 mb-2">
-                  <span>⚓</span> Daily Tasks • المهام العادية
+                  <span>⚓</span> Daily Tasks
                 </h4>
                 {normalTasks.length === 0 && priorityTasks.length === 0 ? (
                   <div className="py-8 text-center bg-stone-50/50 border border-dashed border-stone-200/50 rounded-2xl">

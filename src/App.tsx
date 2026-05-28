@@ -33,7 +33,6 @@ function DashboardLayout() {
     setActiveTab,
     isSidebarOpen,
     setIsSidebarOpen,
-    userProfile,
     searchQuery,
     setSearchQuery,
     openAddModal,
@@ -41,18 +40,20 @@ function DashboardLayout() {
     removeToast,
     activeAlarm,
     dismissAlarm,
-    addToast
+    addToast,
+    activeIdentity,
+    setActiveIdentity
   } = usePlanner();
 
-  // Mapping from string tab key to arabic/english title Pairings
+  // Mapping from string tab key to english titles
   const tabsList = [
-    { key: 'daily', labelEn: 'Daily Focus', labelAr: 'التخطيط اليومي', icon: ClipboardList },
-    { key: 'weekly', labelEn: 'Weekly Agenda', labelAr: 'التخطيط الأسبوعي', icon: Calendar },
-    { key: 'monthly', labelEn: 'Monthly Calendar', labelAr: 'التخطيط الشهري', icon: BookOpen },
-    { key: 'habits', labelEn: 'Habit Logbook', labelAr: 'متتبع العادات', icon: Heart },
-    { key: 'diaries', labelEn: 'My Diary', labelAr: 'المذكرات الشخصية', icon: Notebook },
-    { key: 'studio', labelEn: 'Creative Space', labelAr: 'استوديو السكينة', icon: Sparkles },
-    { key: 'settings', labelEn: 'My Settings', labelAr: 'إعدادات المفكرة', icon: Settings },
+    { key: 'daily', labelEn: 'Daily Focus', icon: ClipboardList },
+    { key: 'weekly', labelEn: 'Weekly Agenda', icon: Calendar },
+    { key: 'monthly', labelEn: 'Monthly Calendar', icon: BookOpen },
+    { key: 'habits', labelEn: 'Habit Logbook', icon: Heart },
+    { key: 'diaries', labelEn: 'My Diary', icon: Notebook },
+    { key: 'studio', labelEn: 'Creative Space', icon: Sparkles },
+    { key: 'settings', labelEn: 'My Settings', icon: Settings },
   ];
 
   const renderActiveView = () => {
@@ -79,7 +80,7 @@ function DashboardLayout() {
   return (
     <div className="min-h-screen bg-bg-page transition-colors duration-500 flex flex-col md:flex-row relative text-stone-700 antialiased overflow-x-hidden selection:bg-secondary/20">
       
-      {/* 1. Mobile top header bar bar */}
+      {/* 1. Mobile top header bar */}
       <header className="md:hidden flex items-center justify-between px-6 py-4 bg-[#ffffff]/70 backdrop-blur-md border-b border-theme-border/45 sticky top-0 z-40 transition-colors duration-300">
         <div className="flex items-center gap-2">
           <Sunset className="text-secondary" size={18} />
@@ -115,7 +116,7 @@ function DashboardLayout() {
                   Boho Planner
                 </span>
                 <span className="text-[9px] uppercase font-bold tracking-widest text-[#8C6A5C]/60 block mt-1">
-                  مفكرة بوهو الرقمية
+                  Creative Digital Diary
                 </span>
               </div>
             </div>
@@ -129,31 +130,26 @@ function DashboardLayout() {
             </button>
           </div>
 
-          {/* User Profile avatar capsule */}
-          <div className="bg-white/45 p-4 rounded-3xl border border-theme-border/40 flex items-center gap-3 relative overflow-hidden transition-colors duration-300">
+          {/* User Profile / Custom Identity Badge */}
+          <div className="bg-white/45 p-4 rounded-3xl border border-theme-border/40 relative overflow-hidden transition-colors duration-300">
             <div className="absolute right-0 top-0 text-primary/5 text-6xl pointer-events-none translate-x-3 translate-y-[-10px] select-none">
               🌿
             </div>
 
-            {userProfile.avatarUrl ? (
-              <img
-                src={userProfile.avatarUrl}
-                alt={userProfile.name}
-                className="w-10 h-10 rounded-full object-cover shrink-0 border-2 border-white shadow-md/5"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-primary/20 text-primary flex items-center justify-center font-extrabold text-sm shrink-0 uppercase border-2 border-white transition-colors duration-300 select-none">
-                {userProfile.name.slice(0, 2)}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-secondary/15 text-secondary flex items-center justify-center font-extrabold text-xs shrink-0 uppercase border-2 border-white transition-colors duration-300 select-none">
+                {activeIdentity.slice(0, 2)}
               </div>
-            )}
-
-            <div className="text-left min-w-0">
-              <h4 className="font-serif font-extrabold text-xs text-stone-800 truncate leading-none">
-                {userProfile.name}
-              </h4>
-              <p className="text-[10px] text-stone-400 font-mono truncate mt-0.5">
-                {userProfile.email}
-              </p>
+              
+              <div className="text-left min-w-0 flex-1">
+                <span className="text-[8px] uppercase font-bold tracking-wider text-secondary block leading-none">Active Workspace</span>
+                <h4 className="font-serif font-extrabold text-xs text-stone-800 truncate leading-none mt-1">
+                  {activeIdentity}
+                </h4>
+                <p className="text-[9px] text-stone-400 font-mono truncate mt-0.5 font-semibold">
+                  Insulated Sandbox
+                </p>
+              </div>
             </div>
           </div>
 
@@ -162,7 +158,7 @@ function DashboardLayout() {
             <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
             <input
               type="text"
-              placeholder="البحث الشامل..."
+              placeholder="Search index..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white/70 border border-theme-border/50 focus:border-primary focus:ring-1 focus:ring-primary/25 rounded-xl pl-9 pr-3 py-2.5 text-xs outline-none text-stone-800 placeholder-stone-400 transition-all font-sans"
@@ -172,7 +168,7 @@ function DashboardLayout() {
           {/* Divider rings decoration representing real ring planner */}
           <div className="space-y-1.5 pt-2">
             <span className="text-[9px] font-bold uppercase tracking-wider text-primary block px-2 select-none transition-colors duration-300">
-              Journal Sections • فصول المفكرة
+              Journal Sections
             </span>
 
             {/* Tabs List */}
@@ -198,9 +194,6 @@ function DashboardLayout() {
                       <TabIcon size={14} className={isActive ? 'text-secondary' : 'text-stone-400'} />
                       <div className="text-left">
                         <span className="block">{tb.labelEn}</span>
-                        <span className="block text-[8px] text-stone-400 font-bold group-hover:text-stone-500 leading-none mt-0.5 font-sans">
-                          {tb.labelAr}
-                        </span>
                       </div>
                     </div>
 
@@ -239,7 +232,7 @@ function DashboardLayout() {
       <main className="flex-1 p-5 md:p-9 relative min-w-0">
         
         {/* Maaloumati App Connection Alert Top Banner */}
-        {localStorage.getItem('maaloumati_registered') !== 'true' && (
+        {localStorage.getItem('boho_banner_dismissed') !== 'true' && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -249,9 +242,9 @@ function DashboardLayout() {
               <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0 animate-bounce text-sm">
                 📝
               </div>
-              <div>
-                <p className="font-bold text-[13px]">سجّل بياناتك الآن في تطبيق "معلومااتي" الاستباقي للربط الأوتوماتيكي! 🌸</p>
-                <p className="text-[10px] text-stone-200 mt-0.5 font-medium">يرجى استكمال وإثبات هويتك المفصلة في إعدادات المفكرة لتخصيص جدول أعمالك بذكاء.</p>
+              <div className="text-left">
+                <p className="font-bold text-[13px]">Isolate or switch your journal workspace profile! 🌸</p>
+                <p className="text-[10px] text-stone-200 mt-0.5 font-medium text-left">Type any unique nickname or workspace ID key in My Settings to securely load separate habits, schedules, and diaries.</p>
               </div>
             </div>
             <div className="flex items-center gap-3 shrink-0 justify-end">
@@ -262,12 +255,12 @@ function DashboardLayout() {
                 }}
                 className="px-4.5 py-2 bg-white text-stone-700 hover:bg-bg-page rounded-xl text-[10px] font-bold transition-all shadow-sm shrink-0 cursor-pointer"
               >
-                الانتقال للتسجيل ↗
+                Go to Settings ↗
               </button>
               <button 
                 onClick={() => {
-                  localStorage.setItem('maaloumati_registered', 'true');
-                  addToast('تم إخفاء التنبيه بنجاح، يمكنك التسجيل لاحقاً من قسم الإعدادات 🤍', 'info');
+                  localStorage.setItem('boho_banner_dismissed', 'true');
+                  addToast('Helpful tutorial alert banner successfully dismissed!', 'info');
                 }}
                 className="text-white/70 hover:text-white text-xs px-1.5 font-bold shrink-0 cursor-pointer"
                 title="Hide notice"
@@ -327,24 +320,24 @@ function DashboardLayout() {
               </div>
 
               <span className="text-[10px] uppercase font-bold tracking-widest text-[#8C6A5C] font-sans block mb-1">
-                منبه اليقظة والخطط البوهيمية 🌿
+                Boho Mindful Awakening Alert 🌿
               </span>
               <h3 className="font-serif text-2xl font-extrabold text-stone-800 leading-tight">
                 {activeAlarm.title}
               </h3>
               <p className="text-xs text-secondary mt-2.5 font-bold">
-                {activeAlarm.reason || 'خطة مجدولة حية حان وقتها الآن!'} | {activeAlarm.time}
+                {activeAlarm.reason || 'This scheduled activity has arrived!'} | {activeAlarm.time}
               </p>
 
               <p className="text-[10px] text-stone-400 mt-5 leading-relaxed font-sans">
-                صوت أجراس السكينة المتواصل يعمل بالخلفية لمساعدتك على بدء نشاطك بيقظة تامة. خذ شهيقاً عميقاً للتركيز ثم ابدأ بهدوء.
+                A serene forest chime loop is ringing to notify you. Take a deep, mindful breath and step peacefully into your scheduled routine.
               </p>
 
               <button
                 onClick={dismissAlarm}
                 className="mt-6 w-full py-3.5 bg-secondary hover:bg-[#b0533e] text-on-secondary rounded-2xl text-xs font-serif font-extrabold transition-all shadow-lg hover:scale-[1.01] active:scale-95 cursor-pointer"
               >
-                حسناً، تم الرؤية والأداء • إيقاف المنبه الحالم 🕊️
+                Acknowledge & Quiet Bell 🕊️
               </button>
             </motion.div>
           </motion.div>
@@ -380,11 +373,6 @@ function DashboardLayout() {
                   <p className="text-xs font-bold text-stone-800 leading-snug">
                     {toast.messageEn || toast.message}
                   </p>
-                  {(toast.messageAr || (toast.messageEn && toast.message !== toast.messageEn)) && (
-                    <p className="text-[10.5px] text-stone-400 font-semibold mt-0.5 leading-tight" style={{ direction: 'rtl', textAlign: 'right' }}>
-                      {toast.messageAr || toast.message}
-                    </p>
-                  )}
                 </div>
               </div>
               <button 

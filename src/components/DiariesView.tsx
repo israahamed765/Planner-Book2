@@ -72,7 +72,7 @@ export default function DiariesView() {
   // Save diary
   const handleSave = () => {
     if (!content.trim()) {
-      addToast('Diary content cannot be empty! Please express your thoughts. 💭 • يرجى كتابة نص المذكرات أولاً!', 'error');
+      addToast('Diary content cannot be empty! Please express your thoughts. 💭', 'error');
       return;
     }
 
@@ -97,7 +97,7 @@ export default function DiariesView() {
   useEffect(() => {
     if (view === 'write' || view === 'edit') {
       const handler = setTimeout(() => {
-        // Just a subtle assurance for the user that typing is persistent
+        // Subtle assurance
       }, 1000);
       return () => clearTimeout(handler);
     }
@@ -106,7 +106,7 @@ export default function DiariesView() {
   // Handle deletions
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this diary page? 🗑️ • هل أنت متأكد من حذف هذه الصفحة؟')) {
+    if (window.confirm('Are you sure you want to delete this diary page? 🗑️')) {
       deleteDiary(id);
     }
   };
@@ -136,13 +136,13 @@ export default function DiariesView() {
               </h1>
             </div>
             <p className="text-[11px] text-stone-500 font-sans mt-1">
-              Capture your whispers, milestones, and cozy moments in English • دوّن تفاصيل يومك ونضجك الفكري بلغة إنجليزية أنيقة ومحفوظة
+              Capture your whispers, milestones, and cozy moments in personal scoped sheets.
             </p>
           </div>
           
           <div className="bg-active-tab border border-theme-border/40 px-4 py-2.5 rounded-2xl flex items-center gap-2">
             <span className="text-xs font-mono font-bold text-stone-500">
-              📆 Virtual Calendar: {currentDate}
+              📆 Virtual Calendar Date: {currentDate}
             </span>
           </div>
         </div>
@@ -157,7 +157,7 @@ export default function DiariesView() {
               <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
               <input
                 type="text"
-                placeholder="Search your memories in English... • ابحث في مذكراتك..."
+                placeholder="Search your memories in English..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-white/60 border border-theme-border/50 focus:border-primary focus:ring-1 focus:ring-primary/25 rounded-2xl pl-10 pr-4 py-3 text-xs outline-none text-stone-800 placeholder-stone-400/85 transition-all font-sans"
@@ -169,7 +169,7 @@ export default function DiariesView() {
                 onClick={() => setSearchQuery('')}
                 className="text-stone-400 hover:text-stone-800 text-xs font-sans cursor-pointer underline whitespace-nowrap"
               >
-                Clear Search • إلغاء التصفية
+                Clear Search
               </button>
             )}
           </div>
@@ -183,10 +183,7 @@ export default function DiariesView() {
               <div className="max-w-md mx-auto space-y-1">
                 <h3 className="font-serif font-bold text-stone-800 text-base">No Journal Entries Found</h3>
                 <p className="text-[11px] text-stone-500 leading-relaxed">
-                  Your notebook pages are empty. Write down your feelings, a warm morning story, or daily gratitude to look back upon!
-                </p>
-                <p className="text-[10px] text-[#8C6A5C] font-semibold">
-                  مذكراتك خالية حالياً. ابدأ تجربة تدوين حكايتك الأولى الآن بالضغط في الأسفل!
+                  Your notebook pages are empty. Write down your feelings, a warm morning story, or daily gratitude steps to review later!
                 </p>
               </div>
             </div>
@@ -225,7 +222,7 @@ export default function DiariesView() {
                   {/* Card Footer Actions */}
                   <div className="flex justify-between items-center border-t border-stone-100/50 pt-3 mt-3">
                     <span className="text-[9px] text-stone-400 font-sans italic">
-                      Click to read/edit • اضغط للمراجعة والتعديل
+                      Click to read or edit
                     </span>
                     
                     <button
@@ -248,7 +245,7 @@ export default function DiariesView() {
               className="px-8 py-4 bg-secondary hover:bg-[#b0533e] text-white font-serif text-sm font-black rounded-full shadow-lg hover:scale-[1.03] active:scale-95 transition-all cursor-pointer flex items-center gap-2.5"
             >
               <Plus size={16} className="stroke-[3]" />
-              <span>Write a New Page • تدوين صفحة جديدة ✍️</span>
+              <span>Write a New Diary Page ✍️</span>
             </button>
           </div>
 
@@ -257,7 +254,7 @@ export default function DiariesView() {
         /* Immersive notebook writing view */
         <div className="bg-gradient-to-br from-white to-tertiary-container/30 rounded-[2.5rem] border border-theme-border/60 shadow-md p-6 md:p-9 max-w-3xl mx-auto space-y-6 relative transition-all duration-300">
           
-          {/* Notebook Spiral Binding visual representation */}
+          {/* Notebook Spiral Binding */}
           <div className="absolute top-1/2 -left-3.5 -translate-y-1/2 flex flex-col gap-3 z-10 pointer-events-none select-none">
             {[...Array(12)].map((_, i) => (
               <div key={i} className="w-7 h-3 rounded-full bg-gradient-to-r from-stone-400 to-stone-200/40 border border-stone-300/60 shadow-sm" />
@@ -271,7 +268,7 @@ export default function DiariesView() {
                 <span>{view === 'write' ? 'Create Diary Entry' : 'Edit Diary Entry'}</span>
               </h2>
               <p className="text-[10px] text-stone-400 font-sans mt-0.5 uppercase tracking-wide">
-                Saving as English memoirs • حفظ تلقائي في ذكرياتك الشخصية
+                Saving to your secure active identity notebook workspace
               </p>
             </div>
 
@@ -292,11 +289,11 @@ export default function DiariesView() {
             {/* Title */}
             <div>
               <label className="text-[10px] uppercase font-bold tracking-widest text-[#8C6A5C] block mb-1.5">
-                Diary Page Title • عنوان خاطرتك اليومية:
+                Diary Page Title:
               </label>
               <input
                 type="text"
-                placeholder="Give page a mindful header (e.g. A peaceful morning walk)..."
+                placeholder="Give your memory a mindful heading (e.g. A peaceful walk)..."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full bg-white border border-theme-border/40 rounded-xl px-4 py-3 text-xs outline-none text-stone-850 font-serif focus:ring-1 focus:ring-primary/25 placeholder-stone-400/85 shadow-inner"
@@ -306,7 +303,7 @@ export default function DiariesView() {
             {/* Mood selector */}
             <div>
               <label className="text-[10px] uppercase font-bold tracking-widest text-[#8C6A5C] block mb-2">
-                Vibe / Mood • شعورك وطاقتك الحالية:
+                Current Vibe & Mood:
               </label>
               <div className="flex flex-wrap gap-2">
                 {MOODS.map((m) => {
@@ -334,22 +331,19 @@ export default function DiariesView() {
             {/* Immersive ruled writing area */}
             <div>
               <label className="text-[10px] uppercase font-bold tracking-widest text-[#8C6A5C] block mb-1.5">
-                What happened today? • ماذا حدث معك اليوم؟ (Express in English):
+                What happened today? (Share your cozy thoughts):
               </label>
-              <p className="text-[9px] text-[#8C6A5C] mb-2 bg-secondary/5 px-2.5 py-1 rounded-lg inline-block border border-secondary/10">
-                💡 Tip: English language ensures high compatibility and fits the beautiful aesthetic notebook pages perfectly.
-              </p>
               
               <div className="relative">
                 <textarea
-                  placeholder="Dear Journal, today was a cozy day because..."
+                  placeholder="Dear Journal, today was a peaceful day because..."
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   rows={10}
                   className="w-full bg-white border border-theme-border/50 rounded-2.5xl px-5 py-4 text-xs tracking-wide leading-[2rem] text-stone-800 font-serif focus:ring-1 focus:ring-secondary/25 focus:border-secondary/40 outline-none resize-none placeholder-stone-400/85 shadow-inner journal-ruled-lines font-medium"
                 />
                 
-                {/* Visual watermark indicating digital safe vault */}
+                {/* Visual watermark */}
                 <div className="absolute bottom-3 right-4 text-[9px] text-stone-300 font-mono select-none pointer-events-none uppercase">
                    🔏 Secured Local Vault
                 </div>
@@ -360,15 +354,13 @@ export default function DiariesView() {
             <div className="bg-stone-50 p-4 rounded-2xl border border-stone-100 flex gap-2.5 items-start">
               <Info size={14} className="text-secondary shrink-0 mt-0.5" />
               <p className="text-[10px] text-stone-500 leading-normal font-sans">
-                By clicking "Save", this page will be digitally sewed to your secure device browser local storage. Only your phone or desktop can read it.
-                <br />
-                <span className="text-primary font-semibold">بمجرد الحفظ، سيتم تأمين هذه الخاطرة أوتوماتيكياً في ملفات جهازك مع خصوصية واستقلالية كاملة!</span>
+                By clicking "Save", this page will be digitally saved to your active identity scope inside your local browser. No other device profile can read your secure entry.
               </p>
             </div>
 
           </div>
 
-          {/* Core Navigation Controls as requested */}
+          {/* Core Navigation Controls */}
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 border-t border-theme-border/40 pt-5 mt-4">
             
             {/* GO BACK BUTTON */}
@@ -378,7 +370,7 @@ export default function DiariesView() {
               className="px-5 py-2.5 rounded-xl text-xs text-stone-600 hover:text-stone-850 hover:bg-stone-100/70 border border-stone-200 hover:border-stone-300 transition-all font-sans font-bold flex items-center gap-1.5 cursor-pointer"
             >
               <ArrowLeft size={13} />
-              <span>← Back to Diaries • رجوع للقائمة</span>
+              <span>← Back to Memories</span>
             </button>
 
             {/* SAVE BUTTON */}
@@ -388,7 +380,7 @@ export default function DiariesView() {
               className="px-6 py-3 bg-primary hover:bg-[#745548] text-white rounded-xl text-xs font-serif font-black shadow-md hover:scale-102 transition-all flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center"
             >
               <Save size={14} />
-              <span>Save Diary Page • حفظ الصفحة 💾</span>
+              <span>Save Journal Entry 💾</span>
             </button>
 
           </div>

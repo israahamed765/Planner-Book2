@@ -41,25 +41,25 @@ export default function StudioView() {
 
   // Vision Card Generator
   const [visionCard, setVisionCard] = useState({
-    title: 'تأكيد السكينة اليومية • Mindful Affirmation',
-    quote: 'سأستقبل تفاصيل هذا اليوم بحب وصبر، خطتي هي خريطة طريقي وليست قيداً يعيقني.',
+    title: 'Mindful Affirmation',
+    quote: 'I will embrace the details of today with love and patience. My plan is my roadmap, not a restriction.',
     theme: 'bg-gradient-to-br from-[#FAF5EF] to-[#FAECE0]'
   });
 
   const affirmations = [
     {
-      title: 'تنفس بعمق • Deep Inhale',
-      quote: 'كل خطة صغيرة تسجلها اليوم هي خطوة نحو تحقيق شغفك الأكبر. خذ نفساً عميقاً وابدأ بلطف.',
+      title: 'Deep Inhale',
+      quote: 'Every tiny step you list today is a stride towards your grander purpose. Take a deep breath and start gently.',
       theme: 'bg-gradient-to-br from-[#FAF5EF] to-[#F2EFE9]'
     },
     {
-      title: 'تأكيد السلام الداخلي • Inner Peace',
-      quote: 'نجاحي لا يقاس بإنهاء المهام بسرعة، بل بجودة السكينة والوعي التي أصنع بها يومي.',
+      title: 'Inner Peace & Serenity',
+      quote: 'My progress is not measured by the speed of finishing tasks, but by the level of gratitude and awareness I bring to my day.',
       theme: 'bg-gradient-to-br from-[#FAF5EF] to-[#E3ECE7]'
     },
     {
-      title: 'يقظة وهمة • Resilience',
-      quote: 'الأوقات تتبدل، وهمتك باقية. دع خطواتك المفرودة بوهيميًا على الصفحة تلهمك للنمو الفسيح.',
+      title: 'Empowerment & Resilience',
+      quote: 'Seasons shift, but your inner spark stays bright. Let your handwritten bohemian steps on this page inspire spacious growth.',
       theme: 'bg-gradient-to-br from-[#FAF5EF] to-[#F1E4E2]'
     }
   ];
@@ -124,7 +124,7 @@ export default function StudioView() {
     try {
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
       if (!AudioContext) {
-        addToast('المتصفح لا يدعم توليد الصوت الاصطناعي ⚠️', 'info');
+        addToast('Your browser does not support synthesized audio ⚠️', 'info');
         return;
       }
       const ctx = new AudioContext();
@@ -247,10 +247,10 @@ export default function StudioView() {
         synthIntervalRef.current = chimeInterval as any;
       }
 
-      addToast(`🌸 تم تشغيل المقطع الصوتي المهدئ للأعصاب!`, 'success');
+      addToast(`🌸 Ambient soundscape activated successfully!`, 'success');
     } catch (e) {
       console.warn("Synth failed", e);
-      addToast("فشل تفعيل نظام الصوت الاصطناعي ⚠️", "error");
+      addToast("Could not activate soundscape synthesizer ⚠️", "error");
     }
   };
 
@@ -276,20 +276,20 @@ export default function StudioView() {
           ✨
         </div>
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="space-y-1">
-            <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">مساحة الهدوء الذهني وحياكة الأفكار • Mental Sanctuary</span>
+          <div className="space-y-1 text-left">
+            <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Mental Sanctuary & Mind Knitting Space</span>
             <h2 className="font-serif text-3xl font-extrabold text-stone-800 tracking-tight">
-              🎨 استوديو أورا الإبداعي والسكينة
+              🎨 Aura Creative Space & Zen Studio
             </h2>
             <p className="text-xs text-[#8C6A5C] font-semibold">
-              لوحة تفاعلية بصرية لأهداف اليوم مدمجة مع نظام توليد أصوات الطبيعة للاسترخاء والتركيز.
+              An interactive mindmap of your day with an offline ambient soundscape generator for deep focus and calmness.
             </p>
           </div>
           <button
             onClick={() => setActiveTab('daily')}
             className="px-5 py-3 bg-stone-100 hover:bg-stone-200/60 text-stone-700 rounded-2xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
           >
-            <span>التراجع للجدول اليومي</span>
+            <span>Back to Daily Agenda</span>
             <ArrowRight size={14} className="rotate-180" />
           </button>
         </div>
@@ -300,15 +300,15 @@ export default function StudioView() {
         <div className="lg:col-span-8 space-y-6">
           <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-7 md:p-8 border border-white/50 shadow-sm text-left">
             <div className="flex items-center justify-between border-b border-stone-200/40 pb-4 mb-6">
-              <div>
+              <div className="text-left">
                 <h3 className="font-serif text-md font-bold text-stone-800 flex items-center gap-2">
                   <Brain className="text-[#d36b54]" size={16} />
-                  <span>كوكبة المخطط البصري اليومي • Path Mindmap</span>
+                  <span>Interactive Path Mindmap</span>
                 </h3>
-                <span className="text-[9px] text-stone-400 font-sans block mt-0.5">انقر على أي كويكب/خطة لتغيير حالتها في الجدول المباشر فوراً</span>
+                <span className="text-[9px] text-stone-400 font-sans block mt-0.5">Click any orbit node or custom hour-block to instantly toggle its status.</span>
               </div>
               <span className="text-[9px] uppercase font-extrabold px-2.5 py-1 rounded bg-[#FAF5EF] text-[#8C6A5C] font-mono select-none">
-                {dayTasks.length + daySchedules.length} عقد مستديرة
+                {dayTasks.length + daySchedules.length} Active Nodes
               </span>
             </div>
 
@@ -327,7 +327,7 @@ export default function StudioView() {
               {/* Central Core Aura Node */}
               <div className="absolute z-10 w-24 h-24 rounded-full bg-white border border-stone-200 shadow-xl flex flex-col items-center justify-center p-2 text-center select-none animate-pulse">
                 <Compass className="text-secondary mb-1" size={18} />
-                <span className="font-serif text-[10px] font-bold text-stone-800 leading-none">فضاء اليوم</span>
+                <span className="font-serif text-[10px] font-bold text-stone-800 leading-none">Aura Center</span>
                 <span className="font-mono text-[8px] text-[#8C6A5C] mt-0.5 block">{currentDate.slice(5)}</span>
               </div>
 
@@ -336,7 +336,7 @@ export default function StudioView() {
                 <div className="text-center z-20 space-y-2 max-w-xs self-center">
                   <span className="text-2xl block select-none">🕊️</span>
                   <p className="text-xs text-stone-400 font-semibold leading-relaxed">
-                    فضاؤك خاوٍ حالياً. أضف بعض التنبيهات أو الواجبات إلى تخطيطك لتراها تدور بانسجام!
+                    Your aura space is clear for today. Add timed daily tasks or schedule slots to watch them rotate in beautiful harmony!
                   </p>
                 </div>
               ) : (
@@ -381,9 +381,9 @@ export default function StudioView() {
                                 setTimeout(() => ctx.close(), 500);
                               }
                             } catch{}
-                            addToast(isCompleted ? 'تمت إعادة المهمة للمسار النشط' : 'تهانينا! تم إنجاز خطتك المستديرة بنجاح 🎉', 'success');
+                            addToast(isCompleted ? 'Task reopened for active list progress ⏳' : 'Congratulations! Cycle task completed successfully 🎉', 'success');
                           } else {
-                            addToast(`⏰ هذه خطة زمنية مجدولة حان وقتها في ${item.time}`, 'info');
+                            addToast(`⏰ This is a scheduled hour block running at ${item.time}`, 'info');
                           }
                         }}
                         style={{
@@ -393,7 +393,7 @@ export default function StudioView() {
                         }}
                         className={`absolute z-20 p-2.5 rounded-2xl border text-stone-700 min-w-[90px] max-w-[140px] text-left shadow-md flex flex-col gap-1 select-none cursor-pointer group transition-all text-ellipsis overflow-hidden ${
                           isCompleted 
-                            ? 'bg-[#E3ECE7]/90 border-emerald-300 line-through text-stone-400' 
+                             ? 'bg-[#E3ECE7]/90 border-emerald-300 line-through text-stone-400' 
                             : isTask 
                               ? 'bg-white border-stone-200 hover:border-[#8C6A5C]/40' 
                               : 'bg-gradient-to-br from-[#FAF5EF]/95 to-white border-dashed border-secondary/30'
@@ -404,7 +404,7 @@ export default function StudioView() {
                             isCompleted ? 'bg-emerald-500' : isTask ? 'bg-amber-500' : 'bg-[#d36b54]'
                           }`} />
                           <span className="font-mono text-[7px] tracking-wider text-stone-400 font-extrabold uppercase truncate">
-                            {isTask ? 'مهمة عمل' : `موعد ${item.time}`}
+                            {isTask ? 'Active Task' : `Plan @ ${item.time}`}
                           </span>
                         </div>
                         <span className="font-serif text-[10px] font-bold truncate leading-tight block text-stone-800">
@@ -425,17 +425,17 @@ export default function StudioView() {
           <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-7 border border-white/50 shadow-sm">
             <h3 className="font-serif text-md font-bold text-stone-800 flex items-center gap-2 mb-2">
               <Music className="text-[#d36b54]" size={16} />
-              <span>مستودع أصوات الطبيعة • Soundscapes</span>
+              <span>Soothing Ambient Soundscapes</span>
             </h3>
             <p className="text-[10px] text-stone-400 mb-5">
-              جهاز الـ Synth البوهيمي الداخلي. قم بتشغيل صوت هادئ بجانب تخطيطك لتهدئة ذهنك وتحقيق التركيز العميق.
+              Our offline boho synthesizer. Play comforting frequencies in the background while designing your target hours.
             </p>
 
             <div className="space-y-4">
               {[
-                { id: 'wind', name: 'أصوات نسمة الرياح الدافئة', desc: 'Warm Autumn Meadow Breeze', icon: Wind, color: 'text-amber-600 bg-amber-50' },
-                { id: 'river', name: 'خرير جريان النبع البوهيمي', desc: 'Soothing Flowing River Pad', icon: Waves, color: 'text-blue-600 bg-blue-50' },
-                { id: 'chimes', name: 'جرس السكينة لليقظة الذهنية', desc: 'Zen Soft Wind Chimes', icon: Sparkles, color: 'text-emerald-600 bg-emerald-50' },
+                { id: 'wind', name: 'Golden Meadow Wind', desc: 'Warm Autumn Meadow Breeze', icon: Wind, color: 'text-amber-600 bg-amber-50' },
+                { id: 'river', name: 'Bohemian Stream Flow', desc: 'Soothing Flowing River Pad', icon: Waves, color: 'text-blue-600 bg-blue-50' },
+                { id: 'chimes', name: 'Zen Sparkle Chimes', desc: 'Zen Soft Wind Chimes', icon: Sparkles, color: 'text-emerald-600 bg-emerald-50' },
               ].map(track => {
                 const isPlaying = activeTrack === track.id;
                 const TrackIcon = track.icon;
@@ -452,7 +452,7 @@ export default function StudioView() {
                       <div className={`p-2 rounded-xl ${track.color} shrink-0`}>
                         <TrackIcon size={16} />
                       </div>
-                      <div>
+                      <div className="text-left">
                         <span className="font-serif text-xs font-bold text-stone-800 block">{track.name}</span>
                         <span className="font-mono text-[9px] text-[#8C6A5C] mt-0.5 block leading-none">{track.desc}</span>
                       </div>
@@ -475,8 +475,8 @@ export default function StudioView() {
               {activeTrack && (
                 <div className="flex items-center justify-center gap-2 bg-stone-100/40 p-3 rounded-2xl border border-stone-200/20 text-[10px] text-stone-500 font-mono select-none">
                   <Volume2 size={13} className="text-secondary animate-pulse" />
-                  <span>توليف حي مستمر • Synthesis running...</span>
-                  <button onClick={stopAudio} className="text-rose-500 font-bold ml-auto hover:underline cursor-pointer">إيقاف</button>
+                  <span>Synthesis running...</span>
+                  <button onClick={stopAudio} className="text-rose-500 font-bold ml-auto hover:underline cursor-pointer">Stop</button>
                 </div>
               )}
             </div>
@@ -503,7 +503,7 @@ export default function StudioView() {
                 onClick={handleNextVision}
                 className="text-[10px] font-sans font-bold text-secondary hover:text-black transition-all cursor-pointer flex items-center gap-1"
               >
-                <span>توكيد جديد</span>
+                <span>New affirmation</span>
                 <Sparkles size={11} />
               </button>
             </div>

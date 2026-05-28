@@ -29,7 +29,9 @@ export default function SettingsView() {
     setVirtualTimeConfigured,
     accentStyle,
     setAccentStyle,
-    addToast
+    addToast,
+    activeIdentity,
+    setActiveIdentity
   } = usePlanner();
 
   // Settings states
@@ -37,6 +39,9 @@ export default function SettingsView() {
   const [userEmail, setUserEmail] = useState(userProfile.email);
   const [showToast, setShowToast] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(userProfile.avatarUrl || null);
+
+  // New workspace active identity input
+  const [newIdentityInput, setNewIdentityInput] = useState(activeIdentity);
 
   // Maaloumati registration helper states
   const [maaloumatiId, setMaaloumatiId] = useState(() => localStorage.getItem('maaloumati_national_id') || '');
@@ -52,21 +57,21 @@ export default function SettingsView() {
 
   const handleRequestNotiPermission = () => {
     if (!('Notification' in window)) {
-      addToast('هذا المتصفح لا يدعم التنبيهات المباشرة ⚠️', 'error');
+      addToast('This browser does not support default system alerts ⚠️', 'error');
       return;
     }
     Notification.requestPermission().then(perm => {
       setNotiPermission(perm);
       if (perm === 'granted') {
-        addToast('تم تفعيل إشعارات سطح المكتب والتنبيهات المباشرة بنجاح! 🔔✨', 'success');
+        addToast('Desktop alerts and status notifications activated successfully! 🔔✨', 'success');
         try {
-          new Notification('🔔 تم تفعيل التنبيهات بنجاح!', {
-            body: 'مرحباً بك! ستصلك التنبيهات والأجراس هنا حتى لو كان هذا التبويب مفتوحاً بالخلفية.',
+          new Notification('🔔 Alarms Activated Successfully!', {
+            body: 'Welcome! You will receive hour-block alerts and sound reminders here.',
             icon: 'https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=128'
           });
         } catch {}
       } else if (perm === 'denied') {
-        addToast('تم رفض إذن الإشعارات. إذا كنت داخل لوحة المعاينة (iFrame)، يرجى فتح التطبيق في علامة تبويب مستقلة كاملة وتفعيل الإذن بنجاح 🔒', 'error');
+        addToast('Notification permission denied. If inside an iframe, please open the app in a new browser tab to activate system alarms 🔒', 'error');
       }
     });
   };
@@ -98,9 +103,9 @@ export default function SettingsView() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      addToast('تمت صياغة تصدير وحفظ نسخة احتياطية كاملة من بياناتك بنجاح! 💾✨', 'success');
+      addToast('Complete database backup file downloaded successfully! 💾✨', 'success');
     } catch {
-      addToast('عذراً، حدث خطأ ما أثناء تصدير نسخة احتياطية ⚠️', 'error');
+      addToast('Could not compile or export the sandbox database ⚠️', 'error');
     }
   };
 
@@ -118,19 +123,19 @@ export default function SettingsView() {
             localStorage.removeItem(key);
           }
         });
-        addToast('تم قراءة ملف النسخة الاحتياطية بنجاح! يتم الآن إعادة المزامنة... 🔄🌿', 'success');
+        addToast('Backup restored successfully! Synchronizing system data... 🔄🌿', 'success');
         setTimeout(() => {
           window.location.reload();
         }, 1200);
       } catch {
-        addToast('صلابة ملف النسخة غير متوافقة أو تالفة ⚠️', 'error');
+        addToast('Corrupted or invalid JSON backup file structure ⚠️', 'error');
       }
     };
     reader.readAsText(file);
   };
 
   const handlePurgeDatabase = () => {
-    if (window.confirm('هل أنت متأكد تماماً من رغبتك في تصفير وتهيئة كافة جداولك ومهامك لتهيئة الموقع للبيع والنشر لأشخاص جدد؟ لا يمكن استرجاع هذه البيانات.')) {
+    if (window.confirm('Are you absolutely sure you want to completely erase and purge all logged tasks, habits, and entries to factory reset the planner? This action cannot be undone.')) {
       const keysToClear = [
         'aura_tasks', 
         'aura_schedules', 
@@ -147,7 +152,7 @@ export default function SettingsView() {
         'maaloumati_registered'
       ];
       keysToClear.forEach(k => localStorage.removeItem(k));
-      addToast('تمت إعادة تهيئة وتنظيف لوحة البيانات بنجاح كامل! سيتم تدوير الصفحة الآن... 🧼', 'success');
+      addToast('System database wiped completely! Reloading planner context... 🧼', 'success');
       setTimeout(() => {
         window.location.reload();
       }, 1200);
@@ -201,7 +206,7 @@ export default function SettingsView() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setAvatarPreview(reader.result as string);
-        addToast('تم تحميل صورتك وتجهيز معاينتها 📸', 'info');
+        addToast('Avatar uploaded successfully and preview prepared! 📸', 'info');
       };
       reader.readAsDataURL(file);
     }
@@ -251,13 +256,22 @@ export default function SettingsView() {
   // Connect user Maaloumati Identity explicitly
   const handleMaaloumatiLink = () => {
     if (!maaloumatiId.trim()) {
-      addToast('يرجى كتابة رقم الهوية الشخصية لإتمام عملية الربط ⚠️', 'error');
+      addToast('Please type a valid National Identification key first ⚠️', 'error');
       return;
     }
     localStorage.setItem('maaloumati_national_id', maaloumatiId.trim());
     localStorage.setItem('maaloumati_registered', 'true');
     setIsMaaloumatiLinked(true);
-    addToast('🌱 تم الربط المتبادل ومزامنة كافة بيانات هويتك مع تطبيق معلوماتي بنجاح الاستباقي للعمل!', 'success');
+    addToast('🌱 Connected successfully! Identity verified and synced with Maaloumati Hub proactively.', 'success');
+  };
+
+  // Switch Active Workspace Identity Segregation
+  const handleSwitchIdentity = () => {
+    if (!newIdentityInput.trim()) {
+      addToast('Please input a valid identity identifier code ⚠️', 'error');
+      return;
+    }
+    setActiveIdentity(newIdentityInput.trim());
   };
 
   return (
@@ -277,7 +291,7 @@ export default function SettingsView() {
             className="fixed top-6 right-6 z-50 bg-primary text-white px-6 py-4 rounded-2xl shadow-xl flex items-center gap-2.5 font-sans text-sm font-bold border border-primary/20"
           >
             <Sparkles size={16} className="text-white animate-bounce" />
-            تم حفظ وتثبيت كافة تفضيلات المفكرة وخطتك بنجاح! 🌸
+            Planner preferences and simulated timeline applied! 🌸
           </motion.div>
         )}
       </AnimatePresence>
@@ -285,12 +299,12 @@ export default function SettingsView() {
       {/* Editorial Cozy Header */}
       <div className="bg-gradient-to-br from-white/70 to-bg-page/20 backdrop-blur-md rounded-[2.5rem] p-8 md:p-9 border border-theme-border/40 transition-all duration-300 shadow-sm">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 text-left">
             <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
               <Settings size={26} />
             </div>
             <div>
-              <h2 className="font-serif text-3xl font-extrabold text-stone-800 tracking-tight">إعدادات هويتك وجدولك</h2>
+              <h2 className="font-serif text-3xl font-extrabold text-stone-800 tracking-tight">Identity & System Settings</h2>
               <p className="font-sans text-xs text-stone-500 font-medium mt-0.5">
                 Personalize your digital planner style, simulated timeline clocks and identity links
               </p>
@@ -320,7 +334,7 @@ export default function SettingsView() {
               ) : (
                 <div className="text-stone-400/80 flex flex-col items-center justify-center gap-2">
                   <User size={48} strokeWidth={1} />
-                  <span className="text-[10px] font-sans font-medium">لا توجد صورة شخصية</span>
+                  <span className="text-[10px] font-sans font-medium">No Portrait Photo set</span>
                 </div>
               )}
 
@@ -331,13 +345,13 @@ export default function SettingsView() {
                 className="absolute inset-0 bg-black/45 flex flex-col items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-xs font-serif font-bold"
               >
                 <Camera size={22} className="animate-pulse" />
-                <span>تحميل صورتي المفضلة</span>
+                <span>Upload My Avatar</span>
               </button>
             </div>
 
             {/* Handwritten style captions */}
             <div className="py-5 select-none text-stone-800 font-serif">
-              <span className="text-sm font-extrabold block">"{userName || 'أنا اليوم'}"</span>
+              <span className="text-sm font-extrabold block">"{userName || 'Me Today'}"</span>
               <span className="text-[9px] uppercase tracking-widest text-[#8C6A5C] block mt-1 font-mono">My Dear Diary Portrait</span>
             </div>
 
@@ -347,7 +361,7 @@ export default function SettingsView() {
               onClick={triggerFileInput}
               className="w-full py-2.5 bg-stone-50 hover:bg-stone-100 text-stone-700 rounded-xl text-[10px] font-bold border border-stone-200/40 transition-colors cursor-pointer"
             >
-              عرض وتحديث صورة الملف شخصياً
+              Upload Custom Profile Avatar
             </button>
 
             <input 
@@ -360,20 +374,20 @@ export default function SettingsView() {
           </div>
 
           {/* Aesthetic Palette Chooser Card */}
-          <div className="bg-white/60 backdrop-blur-md rounded-[2rem] p-6 border border-white/40 shadow-sm">
+          <div className="bg-white/60 backdrop-blur-md rounded-[2rem] p-6 border border-white/40 shadow-sm text-left">
             <h3 className="font-serif text-sm font-bold text-stone-800 flex items-center gap-2 mb-2">
               <Palette className="text-[#d36b54]" size={15} />
-              <span>طابع ألوان مفكرتك المحبوبة</span>
+              <span>Cozy Accent Color Palette</span>
             </h3>
-            <p className="text-[10px] text-stone-500 mb-4 leading-relaxed">
-              اختر أحد التنسيقات المجهزة بكامل الألوان للأولاد أو البنات ليتغير تصميم وألوان أزرار جدولك فورياً.
+            <p className="text-[10px] text-stone-500 mb-4 leading-relaxed font-sans">
+              Choose one of our hand-crafted color palettes to instantly adapt buttons, highlights, and borders to your visual preference.
             </p>
 
             <div className="flex flex-col gap-3">
               {[
-                { key: 'girls', label: 'عنابي دافئ وبناتي دافئ 🌸', colorBg: 'bg-[#B87E88]', desc: 'Soft Dusty Rose Lavender' },
-                { key: 'boys', label: 'أزرق سلفر وأزرق نيلي للأولاد 💎', colorBg: 'bg-[#4F7085]', desc: 'Cool Ocean Slate Blue' },
-                { key: 'classic', label: 'ترابي بوهيمي كلاسيكي هادئ 🌿', colorBg: 'bg-[#8C6A5C]', desc: 'Earthy Clay Terracotta' },
+                { key: 'girls', label: 'Warm Vintage Rose 🌸', colorBg: 'bg-[#B87E88]', desc: 'Soft Dusty Rose Lavender' },
+                { key: 'boys', label: 'Nordic Ocean Blue 💎', colorBg: 'bg-[#4F7085]', desc: 'Cool Ocean Slate Blue' },
+                { key: 'classic', label: 'Classic Boho Earth 🌿', colorBg: 'bg-[#8C6A5C]', desc: 'Earthy Clay Terracotta' },
               ].map(opt => {
                 const isSelected = accentStyle === opt.key;
                 return (
@@ -383,7 +397,7 @@ export default function SettingsView() {
                     type="button"
                     onClick={() => {
                       setAccentStyle(opt.key as any);
-                      addToast(`تم تحويل طابع ألوان المفكرة إلى ${opt.label}`, 'success');
+                      addToast('Planner theme successfully updated!', 'success');
                     }}
                     className={`p-3 rounded-2xl border text-left cursor-pointer transition-all flex items-center gap-3.5 ${
                       isSelected
@@ -392,7 +406,7 @@ export default function SettingsView() {
                     }`}
                   >
                     <div className={`w-5 h-5 rounded-full ${opt.colorBg} border border-white/50 shadow-inner shrink-0`} />
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <span className="font-sans font-bold text-[11px] block text-stone-800 truncate">{opt.label}</span>
                       <span className="font-mono text-[8px] text-[#8C6A5C] block mt-0.5 truncate">{opt.desc}</span>
                     </div>
@@ -406,15 +420,66 @@ export default function SettingsView() {
 
         {/* Right Side: Primary Info Fields, Virtual Clock & Maaloumati (8 Cols) */}
         <div className="lg:col-span-8 space-y-6">
+          {/* Workspace Identity Isolation block */}
+          <div className="bg-white/60 backdrop-blur-md rounded-[25px] p-7 md:p-8 border border-theme-border/40 transition-colors duration-300 shadow-sm space-y-4 text-left">
+            <h3 className="font-serif text-md font-bold text-stone-800 border-b border-stone-200/50 pb-3 flex items-center gap-2">
+              <span className="text-md">🔑</span>
+              <span>Isolated Workspace Identity Key</span>
+            </h3>
+            <p className="text-[10px] text-stone-500 font-sans leading-relaxed">
+              Every guest on this app is allocated an independent sandboxed space. Swap your workspace nickname key (e.g. your email or nickname) to cleanly load or recover your dedicated tasks, habits, and diaries.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative focus-within:text-primary text-stone-400 transition-colors flex-1">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm select-none">
+                  👤
+                </span>
+                <input
+                  id="settings-workspace-key-input"
+                  type="text"
+                  required
+                  placeholder="Enter custom key (e.g. tsraathmd, guest_2)"
+                  value={newIdentityInput}
+                  onChange={(e) => setNewIdentityInput(e.target.value)}
+                  className="w-full border border-stone-200 bg-white rounded-xl pl-11 pr-4 py-3 text-xs text-stone-800 outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/50"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleSwitchIdentity();
+                    }
+                  }}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleSwitchIdentity}
+                className="px-5 py-3 bg-secondary hover:bg-[#b0533e] text-white rounded-xl text-xs font-bold shadow-sm cursor-pointer transition-all shrink-0 font-sans"
+              >
+                Switch Workspace & Load
+              </button>
+            </div>
+            
+            <div className="bg-stone-50 p-4 rounded-2xl border border-stone-200/50 text-xs text-stone-600 flex items-center justify-between">
+              <div>
+                <span className="text-[10.5px] uppercase font-sans font-bold text-stone-400 block tracking-wider leading-none">Current Active Key:</span>
+                <span className="font-mono font-bold text-xs text-stone-800 mt-1 block">{activeIdentity}</span>
+              </div>
+              <span className="text-[9px] font-mono px-3 py-1 rounded-full bg-[#E3ECE7] text-emerald-800 border border-emerald-200">
+                Data Sandbox Active
+              </span>
+            </div>
+          </div>
+
           {/* Main Credentials Form */}
-          <form onSubmit={handleSave} className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-7 md:p-8 border border-white/40 shadow-sm space-y-6">
+          <form onSubmit={handleSave} className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-7 md:p-8 border border-white/40 shadow-sm space-y-6 text-left">
             <h3 className="font-serif text-md font-bold text-stone-800 border-b border-stone-200/50 pb-3">
-              البيانات الشخصية والتعريفية • Personal Metadata
+              Personal Details & Metadata
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label htmlFor="settings-username-input" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">الاسم الكامل • Your Name</label>
+                <label htmlFor="settings-username-input" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">Full Name</label>
                 <div className="relative mt-1 focus-within:text-primary text-stone-400 transition-colors">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2">
                     <User size={15} />
@@ -431,7 +496,7 @@ export default function SettingsView() {
               </div>
 
               <div>
-                <label htmlFor="settings-email-input" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">البريد الإلكتروني • Email Address</label>
+                <label htmlFor="settings-email-input" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">Email Address</label>
                 <div className="relative mt-1 focus-within:text-primary text-stone-400 transition-colors">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2">
                     <Mail size={15} />
@@ -449,15 +514,15 @@ export default function SettingsView() {
             </div>
 
             <h3 className="font-serif text-md font-bold text-stone-800 border-b border-stone-200/50 pt-2 pb-3">
-              منظم الوقت والساعة الافتراضية • Temporal Systems
+              Simulated Clock & Time Travel
             </h3>
-            <p className="text-[10px] text-stone-500 -mt-3">
-              يمكنك السفر بالزمن في مفكرتك الافتراضية لعرض مواعيد ومهام أيام سابقة أو قادمة، وتحديث أجهزة الإشعار محلياً.
+            <p className="text-[10px] text-stone-500 -mt-3 font-sans">
+              Adjust your virtual timeframe below to travel in time, view historical or upcoming schedules, and test notification alarms.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label htmlFor="temp-date-picker" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">اليوم الافتراضي النشط • Current Date</label>
+                <label htmlFor="temp-date-picker" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">Simulated Current Date</label>
                 <div className="relative mt-1 text-stone-400">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                     <Calendar size={15} />
@@ -474,7 +539,7 @@ export default function SettingsView() {
               </div>
 
               <div>
-                <label htmlFor="temp-year-picker" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">سنة التقويم المختارة • Selected Year</label>
+                <label htmlFor="temp-year-picker" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">Simulated Selected Year</label>
                 <input
                   id="temp-year-picker"
                   type="number"
@@ -490,7 +555,7 @@ export default function SettingsView() {
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label htmlFor="temp-hour-select" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">ساعة التنبيه الافتراضية</label>
+                <label htmlFor="temp-hour-select" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">Simulated Hour</label>
                 <div className="relative mt-1 text-stone-400">
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
                     <Clock size={13} />
@@ -509,7 +574,7 @@ export default function SettingsView() {
               </div>
 
               <div>
-                <label htmlFor="temp-minute-select" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">دقيقة التنبيه الافتراضية</label>
+                <label htmlFor="temp-minute-select" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">Simulated Minute</label>
                 <select
                   id="temp-minute-select"
                   value={tempMin}
@@ -523,15 +588,15 @@ export default function SettingsView() {
               </div>
 
               <div>
-                <label htmlFor="temp-ampm-select" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">الفترة الافتراضية AM/PM</label>
+                <label htmlFor="temp-ampm-select" className="text-[10px] uppercase font-sans font-extrabold text-stone-400 select-none">Simulated Period (AM/PM)</label>
                 <select
                   id="temp-ampm-select"
                   value={tempAmpm}
                   onChange={(e) => setTempAmpm(e.target.value)}
                   className="w-full border border-stone-200 bg-white/80 rounded-xl px-3.5 py-3 text-xs text-stone-800 outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/50 mt-1 cursor-pointer"
                 >
-                  <option value="AM">صباحاً (AM)</option>
-                  <option value="PM">مساءً (PM)</option>
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
                 </select>
               </div>
             </div>
@@ -543,34 +608,34 @@ export default function SettingsView() {
                 className="px-6 py-3.5 bg-primary hover:bg-opacity-95 text-white rounded-2xl font-sans text-xs font-bold shadow-md cursor-pointer flex items-center gap-1.5 hover:scale-[1.01] active:scale-95 transition-all"
               >
                 <Save size={14} />
-                <span>حفظ التمييز وتوقيت المفكرة • Apply Settings</span>
+                <span>Apply Time & Profile Configuration</span>
               </button>
             </div>
           </form>
 
           {/* Maaloumati Identity Sync Portal Section */}
-          <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-7 md:p-8 border border-theme-border/40 transition-colors duration-300 shadow-sm space-y-5">
+          <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-7 md:p-8 border border-theme-border/40 transition-colors duration-300 shadow-sm space-y-5 text-left">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-200/50 pb-3">
-              <div>
+              <div className="text-left">
                 <h3 className="font-serif text-md font-bold text-stone-800 mb-0.5 flex items-center gap-2">
                   <ShieldCheck className="text-secondary" size={17} />
-                  <span>تطبيق معلوماتي الموحد • Maaloumati Hub</span>
+                  <span>Maaloumati Hub Integration</span>
                 </h3>
-                <p className="text-[10px] text-stone-500 font-sans">تزامن الهوية الفردية والأحوال الوطنية لتخصيص جدول المواعيد بذكاء استباقي.</p>
+                <p className="text-[10px] text-stone-500 font-sans">Synchronize unique civilian credentials & national events for proactive smart scheduling.</p>
               </div>
 
               <div className="flex items-center gap-1.5 shrink-0 self-start sm:self-center">
                 <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${isMaaloumatiLinked ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
                 <span className="font-mono text-[9px] font-bold text-stone-600 uppercase select-none">
-                  {isMaaloumatiLinked ? 'مربط نشط ومزامن' : 'غير مكتمل الربط بعد'}
+                  {isMaaloumatiLinked ? 'Active Sync Connected' : 'Not Linked'}
                 </span>
               </div>
             </div>
 
             {!isMaaloumatiLinked ? (
               <div className="space-y-4">
-                <div className="bg-[#FFF6F6] text-stone-700 p-4 rounded-2xl border border-rose-100 text-xs text-left leading-relaxed">
-                  ⚠️ <strong>تنبيه الربط المفقود</strong>: لم تقم بربط جدولك بتطبيق "معلوماتي". سيظل شريط التنبيه الإرشادي معروضاً في أعلى الصفحة الرئيسية حتى يتم استكمال مزامنة رقم هويتك لتفعيل الدعم.
+                <div className="bg-[#FFF6F6] text-stone-700 p-4 rounded-2xl border border-rose-100 text-xs leading-relaxed text-left">
+                  ⚠️ <strong>Synchronization Status:</strong> Your digital planner is currently offline and has not been synced with a validated Maaloumati National ID yet. Enter your civilian identification below to establish cross-linking.
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -581,18 +646,18 @@ export default function SettingsView() {
                     <input
                       type="text"
                       required
-                      placeholder="أدخل رقم الهوية الوطنية (مثل 1234567)"
+                      placeholder="Enter National ID Number (e.g. 1234567)"
                       value={maaloumatiId}
                       onChange={(e) => setMaaloumatiId(e.target.value)}
-                      className="w-full border border-stone-200 bg-white rounded-xl pl-11 pr-4 py-3 text-xs text-stone-800 outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/50"
+                      className="w-full border border-stone-200 bg-white rounded-xl pl-11 pr-4 py-3 text-xs text-stone-800 outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/50 font-mono"
                     />
                   </div>
                   <button
                     type="button"
                     onClick={handleMaaloumatiLink}
-                    className="px-5 py-3 bg-secondary hover:bg-[#b0533e] text-white rounded-xl text-xs font-bold shadow-sm cursor-pointer transition-all shrink-0 animate-pulse"
+                    className="px-5 py-3 bg-secondary hover:bg-[#b0533e] text-white rounded-xl text-xs font-bold shadow-sm cursor-pointer transition-all shrink-0 font-sans"
                   >
-                    تأكيد والربط المباشر ↗
+                    Connect & Sync Identity ↗
                   </button>
                 </div>
               </div>
@@ -601,10 +666,10 @@ export default function SettingsView() {
                 <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 font-bold select-none mt-0.5">
                   ✓
                 </div>
-                <div>
-                  <span className="block font-bold text-stone-800 mb-0.5">تم ربط الهوية الوطنية بنجاح تام</span>
-                  <span className="block text-[10px] text-stone-500 mb-2">رقم المزامنة السري المشفر: {maaloumatiId}</span>
-                  <span className="block text-[11px] text-[#8C6A5C] font-mono">شكراً لك! لقد تم إلغاء البانر الإرشادي العلوي. يمكنك الآن برمجة يومك بكل أمان.</span>
+                <div className="text-left flex-1">
+                  <span className="block font-bold text-stone-800 mb-0.5">National ID Linked Successfully</span>
+                  <span className="block text-[10px] text-stone-500 mb-2 font-mono">Encrypted Sync Signature ID: {maaloumatiId}</span>
+                  <span className="block text-[11px] text-[#8C6A5C]">Thank you! Proactive alerts are initialized. You can now design your calendar and navigate safely.</span>
                   
                   <button
                     type="button"
@@ -613,11 +678,11 @@ export default function SettingsView() {
                       localStorage.removeItem('maaloumati_registered');
                       setMaaloumatiId('');
                       setIsMaaloumatiLinked(false);
-                      addToast('تم فك ربط تطبيق معلوماتي بنجاح 🕊️', 'info');
+                      addToast('Maaloumati identity unlinked successfully! 🕊', 'info');
                     }}
-                    className="mt-3 text-[10px] text-rose-500 font-bold hover:underline cursor-pointer block"
+                    className="mt-3 text-[10px] text-rose-500 font-bold hover:underline cursor-pointer block text-left"
                   >
-                    فك ربط الحساب والبدء من جديد
+                    Unlink Identity & Reset Portal
                   </button>
                 </div>
               </div>
@@ -625,20 +690,20 @@ export default function SettingsView() {
           </div>
 
           {/* Core Background Alerts and PWA publisher guide */}
-          <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-7 md:p-8 border border-theme-border/40 transition-colors duration-300 shadow-sm space-y-6">
+          <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-7 md:p-8 border border-theme-border/40 transition-colors duration-300 shadow-sm space-y-6 text-left">
             <div className="border-b border-stone-200/50 pb-3">
               <h3 className="font-serif text-md font-bold text-stone-800 flex items-center gap-2">
-                <span>🔔 محرك التنبيهات والمستجدات • Background Alerts Engine</span>
+                <span>🔔 Live Alarms & Notifications Engine</span>
               </h3>
               <p className="text-[10px] text-stone-500 font-sans mt-0.5">
-                تفعيل الإشعارات وتأمين عمل النغمات الصوتية الهادئة خارج المتصفح وعند العمل في الخلفية
+                Enable push notifications and ensure cozy chimes trigger correctly even in background processes.
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4.5 bg-secondary/5 rounded-2xl border border-secondary/10">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4.5 bg-[#FAF6F0] rounded-2xl border border-theme-border/40 text-left">
               <div>
                 <p className="text-xs font-bold text-stone-800 flex items-center gap-2">
-                  <span>حالة إذن الإشعارات بالنظام:</span>
+                  <span>System Notification Permission State:</span>
                   <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                     notiPermission === 'granted' 
                       ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
@@ -646,13 +711,13 @@ export default function SettingsView() {
                         ? 'bg-rose-50 text-rose-700 border border-rose-200' 
                         : 'bg-amber-50 text-amber-700 border border-amber-200'
                   }`}>
-                    {notiPermission === 'granted' && 'مفعّلة ومسموحة بنجاح ✓'}
-                    {notiPermission === 'denied' && 'مرفوضة / محجوبة ❌'}
-                    {notiPermission === 'default' && 'معلّقة بانتظار التمتين ⏳'}
+                    {notiPermission === 'granted' && 'Granted ✓'}
+                    {notiPermission === 'denied' && 'Denied / Blocked ❌'}
+                    {notiPermission === 'default' && 'Pending / Default ⏳'}
                   </span>
                 </p>
                 <p className="text-[10px] text-stone-500 font-sans mt-1">
-                  تساعد إشعارات سطح المكتب ونظام التشغيل على تمرير نوافذ المواعيد والأجراس حتى لو كنت تتصفح مواقع أخرى!
+                  Desktop alerts send system-level banners for hourly blocks even if you are browsing other pages!
                 </p>
               </div>
 
@@ -660,61 +725,61 @@ export default function SettingsView() {
                 type="button"
                 onClick={handleRequestNotiPermission}
                 disabled={notiPermission === 'granted'}
-                className={`px-4.5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm shrink-0 cursor-pointer ${
+                className={`px-4.5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm shrink-0 cursor-pointer font-sans ${
                   notiPermission === 'granted'
                     ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 cursor-default'
                     : 'bg-[#8c6a5c] hover:bg-[#745548] text-white'
                 }`}
               >
-                {notiPermission === 'granted' ? 'التنبيهات مفعّلة بالكامل ✓' : '🔔 تفعيل تنبيهات سطح المكتب الان'}
+                {notiPermission === 'granted' ? 'Notifications Activated ✓' : 'Activate System Notifications Now 🔔'}
               </button>
             </div>
 
-            <div className="space-y-3.5 bg-stone-50 p-4.5 rounded-2xl border border-stone-200/50 text-xs text-stone-700 leading-relaxed text-left">
+            <div className="space-y-3.5 bg-stone-50 p-4.5 rounded-2xl border border-stone-200/50 text-xs text-stone-700 leading-relaxed text-left font-sans">
               <p className="font-bold text-primary flex items-center gap-1">
-                <span>📢 دليل النشر التجاري والحلول التقنية (كيف تضمن عمل برنامجك بصوت ونغمة دائمة؟):</span>
+                <span>📢 Commercial Deployment & Background Audio Guide:</span>
               </p>
               
-              <ul className="list-disc pl-5 space-y-2 text-[11px] text-stone-600">
-                <li className="bg-amber-50/70 p-2.5 rounded-xl border border-amber-200/60 list-none mb-1.5">
-                  <span className="text-amber-800 font-extrabold block mb-1">⚠️ سبب ظهور "تم رفض تفعيل الإشعارات" بالمعاينة الحالية? iFrame Restriction</span>
+              <ul className="list-disc pl-5 space-y-2 text-[11px] text-stone-600 text-left">
+                <li className="bg-amber-50/70 p-2.5 rounded-xl border border-amber-200/60 list-none mb-1.5 text-left">
+                  <span className="text-amber-800 font-extrabold block mb-1">⚠️ Why does it show "Blocked" or "Denied" in the current preview? (iFrame Restrictions)</span>
                   <p className="text-[10.5px] text-stone-700 leading-relaxed">
-                    نظراً لأنك تقوم بتجربة التطبيق حالياً <strong>داخل نافذة مدمجة (iFrame)</strong> تابعة للمنصة، فإن المتصفحات الحديثة <strong>تحظر تلقائياً طلبات الإذن لحماية الأمان</strong> وتعتبرها مرفوضة مسبقاً.
+                    Because you are currently testing this application <strong>inside an embedded sandbox iframe</strong> on the AI Studio platform, modern web browsers protect your device by automatically blocking permission prompt requests.
                     <br />
-                    <strong className="text-emerald-700">💡 الحل الفوري والوحيد:</strong> يرجى تصفح التطبيق عبر <strong>علامة تبويب مستقلة كاملة (خارج المنصة)</strong> باستخدام رابط التطبيق المباشر (المطور أو المشترك) المفتوح بالمتصفح، وستتمكن من تفعيل الإذن واستقبال أجراس التنبيه والموجات فورياً وبأعلى دقة!
+                    <strong className="text-emerald-700">💡 Instant Solution:</strong> Simply open the application in a <strong>new standalone browser tab</strong> using the Direct App URL (either the Development link or the Shared link). There, live system alarms, popups, and notification permission dialogs will prompt beautifully and function flawlessly!
                   </p>
                 </li>
                 <li>
-                  <strong className="text-stone-800">سلوك المتصفحات الحديثة:</strong> لأسباب تتعلق بالأمان وتوفير شحن الأجهزة، تقوم جميع المتصفحات (Chrome, Safari, Edge) <strong className="text-secondary">بتجميد وإيقاف أكواد المواقع فور إغلاق علامة التبويب (Tab) بالكامل</strong>.
+                  <strong className="text-stone-800">Browser background behavior:</strong> To preserve computer batteries and memory, modern renderers (such as Chrome, Safari, and Edge) pause timer threads and sound synthesizer scripts the moment a web tab is completely closed.
                 </li>
                 <li>
-                  <strong className="text-stone-800">لتجربة مثالية أثناء الاستخدام:</strong> ننصح بـ <strong className="text-secondary">تثبيت أو ترك التبويب مفتوحاً بالمتصفح</strong> (حتى لو كان مصغراً بالأسفل). ستعمل النوتات الصوتية ونوافذ التنبيه البوهيمية بدقة عالية فورية.
+                  <strong className="text-stone-800">For optimal real-time sounds:</strong> We recommend pinning or background-running this tab on your computer. Alarms and acoustic chime intervals will resonate perfectly.
                 </li>
                 <li>
-                  <strong className="text-stone-800">ميزة تطبيق الويب التقدمي (PWA):</strong> نظراً لجهوزية هذا الكود، يمكنك تصديره وتغليفه بنقرة واحدة كتطبيق <strong className="text-stone-800">PWA</strong> قابل للتنزيل على سطح المكتب وهواتف العملاء، مما يمنحه معالجة مستقلة لا تتجمد بالخلفية كأنه برنامج مثبت أصلي!
+                  <strong className="text-stone-800">Progressive Web App (PWA) advantages:</strong> This application code is fully modern PWA-ready! You can package and compile it statically to download on any smartphone or desktop layout, ensuring autonomous native threads that bypass traditional browser freezes.
                 </li>
               </ul>
             </div>
           </div>
 
           {/* Core isolated privacy database manager block */}
-          <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-7 md:p-8 border border-theme-border/40 transition-colors duration-300 shadow-sm space-y-6">
+          <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-7 md:p-8 border border-theme-border/40 transition-colors duration-300 shadow-sm space-y-6 text-left">
             <div className="border-b border-stone-200/50 pb-3">
               <h3 className="font-serif text-md font-bold text-stone-800 flex items-center gap-2">
-                <span>🔒 خصوصية البيانات وإدارة النسخ الاحتياطية • Privacy & Data Sandbox</span>
+                <span>🔒 Data Privacy & Backup Sandbox</span>
               </h3>
               <p className="text-[10px] text-stone-500 font-sans mt-0.5">
-                تأمين وحماية لسرية بيانات العملاء محلياً وإمكانية استيراد وتصدير قاعدة البيانات فورياً
+                Secure local database sandbox with instant high-speed JSON export and restore capabilities.
               </p>
             </div>
 
-            <div className="bg-primary/5 p-4.5 rounded-2xl border border-primary/10 text-xs text-stone-700 leading-relaxed text-left space-y-2">
-              <p className="font-semibold text-primary">🛡️ ضمانة الخصوصية المطلقة وعزل المستخدمين ومناسبته للبيع المنفصل:</p>
+            <div className="bg-primary/5 p-4.5 rounded-2xl border border-primary/10 text-xs text-stone-700 leading-relaxed text-left space-y-2 font-sans">
+              <p className="font-semibold text-primary">🛡️ Absolute Privacy Guarantee & Individual Client Separation:</p>
               <p className="text-[11px] text-stone-600">
-                يعمل هذا التطبيق بنظام الـ <strong className="text-secondary">Isolated Client-Side Sandbox</strong>، حيث يتم تنزيل قوالب وتعديلات ومهام كل عميل وحفظها مشفرة <strong>على جهاز ومتصفح كل عميل فقط بشكل مستقل بالكامل</strong> (باستخدام LocalStorage).
+                This application operates strictly under an <strong className="text-secondary">Isolated Client-Side Sandbox</strong> architecture. All edits, logged habits, tasks, timeline schedules, and diaries are stored securely in local storage, exclusive to each browser.
               </p>
               <p className="text-[11px] text-stone-600">
-                نظراً لعدم وجود خوادم سحابية مشتركة، <strong>يستحيل تقنياً حدوث أي تداخل في السجلات، أو تسريب للمعلومات، أو رؤية لمهام شخص من قِبل شخص آخر</strong>. هذا يمنحك الجاهزية والصلابة المطلقة لبيع ونشر التطبيق كمنتج رقمي متميز ومغلق آمن لكل مشترٍ على حدة!
+                With zero remote databases, crossover or leakage between different users is physically impossible. This makes the application completely resilient, safe, and ready to license or hand off to separate buyers with maximum data protection.
               </p>
             </div>
 
@@ -723,14 +788,14 @@ export default function SettingsView() {
               <button
                 type="button"
                 onClick={handleExportData}
-                className="px-4 py-3 bg-white hover:bg-stone-50 text-stone-700 hover:text-stone-900 rounded-2xl text-[11px] font-extrabold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 border border-stone-200 shadow-sm"
+                className="px-4 py-3 bg-white hover:bg-stone-50 text-stone-700 hover:text-stone-900 rounded-2xl text-[11px] font-extrabold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 border border-stone-200 shadow-sm font-sans"
               >
-                📥 تصدير البيانات (Backup)
+                📥 Export Backup (JSON)
               </button>
 
               {/* Import backup button */}
-              <label className="px-4 py-3 bg-white hover:bg-stone-50 text-secondary hover:text-[#b0533e] rounded-2xl text-[11px] font-extrabold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 border border-theme-border/50 shadow-sm text-center">
-                📤 استيراد البيانات (Restore)
+              <label className="px-4 py-3 bg-white hover:bg-stone-50 text-secondary hover:text-[#b0533e] rounded-2xl text-[11px] font-extrabold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 border border-theme-border/50 shadow-sm text-center font-sans">
+                📤 Import Backup (JSON)
                 <input
                   type="file"
                   accept=".json"
@@ -743,9 +808,9 @@ export default function SettingsView() {
               <button
                 type="button"
                 onClick={handlePurgeDatabase}
-                className="px-4 py-3 bg-rose-50/70 hover:bg-rose-100 text-rose-600 hover:text-rose-700 rounded-2xl text-[11px] font-extrabold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 border border-rose-100 shadow-sm"
+                className="px-4 py-3 bg-rose-50/70 hover:bg-rose-100 text-rose-600 hover:text-rose-700 rounded-2xl text-[11px] font-extrabold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 border border-rose-100 shadow-sm font-sans"
               >
-                🔥 مسح وتصفير للبيع (Reset)
+                🔥 Reset Database (Factory Purge)
               </button>
             </div>
           </div>
