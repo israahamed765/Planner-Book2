@@ -43,7 +43,7 @@ export default function WeeklyView() {
       sunOffset.setDate(baseDate.getDate() - dayOfWeek);
 
       const list = [];
-      const arDayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+      const arDayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       
       for (let i = 0; i < 7; i++) {
         const itemDate = new Date(sunOffset.getTime());
@@ -88,12 +88,12 @@ export default function WeeklyView() {
       {/* Top Header Card */}
       <div className="bg-white/40 backdrop-blur-md rounded-[2.2rem] p-7 border border-white/50 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div>
-          <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Weekly Dashboard • التخطيط الأسبوعي</span>
+          <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Weekly Dashboard • Weekly Focus</span>
           <h1 className="font-serif text-3xl font-bold text-stone-800 tracking-tight mt-0.5">
             Weekly Notebook
           </h1>
           <p className="font-sans text-xs text-[#8C6A5C] font-semibold mt-1">
-            مستعرض أسبوعي ذكي لعرض وتفريغ وتحضير جدول أعمالك
+            An intelligent weekly layout to organize, reflect, and track your schedules.
           </p>
         </div>
 
@@ -122,7 +122,7 @@ export default function WeeklyView() {
         <div className="lg:col-span-8 space-y-4">
           <h3 className="font-serif text-lg font-bold text-stone-800 pb-1 flex items-center gap-2 px-1">
             <Calendar size={16} className="text-[#8C6A5C]" />
-            <span>Weekly Agenda Spread • جدول الأسبوع</span>
+            <span>Weekly Agenda Spread • Weekdays</span>
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -150,7 +150,7 @@ export default function WeeklyView() {
                           {day.dayNameEn}
                         </h4>
                         <p className="text-[10px] text-primary font-bold -mt-0.5">
-                          {day.dayNameAr}
+                          {day.dayNameShort}
                         </p>
                       </div>
                       

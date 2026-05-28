@@ -76,9 +76,9 @@ export default function MonthlyView() {
       }
 
       const arMonths = [
-        'كانون الثاني / يناير', 'شباط / فبراير', 'آذار / مارس', 'نيسان / أبريل', 
-        'أيار / مايو', 'حزيران / يونيو', 'تموز / يوليو', 'آب / أغسطس', 
-        'أيلول / سبتمبر', 'تشرين الأول / أكتوبر', 'تشرين الثاني / نوفمبر', 'كانون الأول / ديسمبر'
+        'January', 'February', 'March', 'April', 
+        'May', 'June', 'July', 'August', 
+        'September', 'October', 'November', 'December'
       ];
 
       return {
@@ -120,19 +120,19 @@ export default function MonthlyView() {
   };
 
   const weekdaysHeader = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const weekdaysHeaderAr = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+  const weekdaysHeaderAr = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
     <div className="space-y-7 max-w-5xl mx-auto">
       {/* Header Month Switcher Card */}
       <div className="bg-white/40 backdrop-blur-md rounded-[2.2rem] p-7 border border-white/50 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div>
-          <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Monthly Calendar • التخطيط الشهري</span>
+          <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Monthly Calendar • Overview</span>
           <h1 className="font-serif text-3xl font-bold text-stone-800 tracking-tight mt-0.5">
             {monthName}
           </h1>
           <p className="font-sans text-xs text-[#8C6A5C] font-semibold mt-1">
-            {monthNameAr} ({year})
+            Dynamic Monthly View ({year})
           </p>
         </div>
 
@@ -282,24 +282,24 @@ export default function MonthlyView() {
       >
         <div className="flex flex-col md:flex-row items-start justify-between border-b border-stone-200/40 pb-5 gap-4">
           <div>
-            <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">سجل وأرشيف الأحداث اليومي • Daily Event Logger</span>
+            <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Daily Event Logger • Archive & Logs</span>
             <h2 className="font-serif text-2xl font-bold text-stone-800 tracking-tight mt-0.5">
-              🌿 سجل أحداث {(() => {
+              🌿 Day Event Logs: {(() => {
                 try {
                   const parsed = parseLocalDate(currentDate);
-                  const dayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+                  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                   const monthNamesAr = [
-                    'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-                    'يناير', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
                   ];
-                  return `${dayNames[parsed.getDay()]}، ${parsed.getDate()} ${monthNamesAr[parsed.getMonth()]} ${parsed.getFullYear()}`;
+                  return `${dayNames[parsed.getDay()]}, ${parsed.getDate()} ${monthNamesAr[parsed.getMonth()]} ${parsed.getFullYear()}`;
                 } catch {
                   return currentDate;
                 }
               })()}
             </h2>
             <p className="text-xs text-[#8C6A5C] font-semibold mt-1">
-              مراجعة سريعة لما تم تدوينه وإنجازه في هذا اليوم المحدّد
+              A quick overview of what was documented and completed on this specific day.
             </p>
           </div>
 
@@ -307,8 +307,8 @@ export default function MonthlyView() {
             onClick={() => setActiveTab('daily')}
             className="px-5 py-2.5 bg-primary hover:bg-opacity-90 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
           >
-            <span>الانتقال وتعديل التخطيط اليومي المتكامل</span>
-            <ArrowRight size={14} className="rotate-180 md:rotate-0" />
+            <span>Configure or Update Daily Planner</span>
+            <ArrowRight size={14} className="rotate-185 md:rotate-0" />
           </button>
         </div>
 
@@ -318,27 +318,27 @@ export default function MonthlyView() {
             <div>
               <h4 className="font-serif text-xs uppercase text-stone-400 font-bold tracking-wider flex items-center gap-1.5 mb-2.5">
                 <Target size={14} className="text-secondary" />
-                <span>النية والتركيز الرئيسي</span>
+                <span>Main Intentions & Focus</span>
               </h4>
               {focusItem && focusItem.title ? (
                 <div className="bg-gradient-to-br from-[#FAF5EF]/90 to-white p-4.5 rounded-2xl border border-stone-200/30">
                   <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded ${
                     focusItem.completed ? 'bg-emerald-100 text-emerald-800' : 'bg-[#FAF1E6] text-secondary'
                   }`}>
-                    {focusItem.completed ? '✓ تم تحقيقه' : '• نشط الآن'}
+                    {focusItem.completed ? '✓ Achieved' : '• Currently Active'}
                   </span>
                   <p className="font-sans text-xs font-bold text-stone-700 mt-2">{focusItem.title}</p>
-                  <span className="text-[10px] text-stone-400 font-mono block mt-1">{focusItem.duration || 'غير محدّد'}</span>
+                  <span className="text-[10px] text-stone-400 font-mono block mt-1">{focusItem.duration || 'Not configured'}</span>
                 </div>
               ) : (
-                <p className="text-xs text-stone-400 italic">لم يتم تعيين هدف أو نية رئيسية لهذا اليوم بعد.</p>
+                <p className="text-xs text-stone-400 italic">No daily intention or focus goal has been logged for this day yet.</p>
               )}
             </div>
 
             <div>
               <h4 className="font-serif text-xs uppercase text-stone-400 font-bold tracking-wider flex items-center gap-1.5 mb-2.5">
                 <Quote size={14} className="text-secondary" />
-                <span>مساحة الامتنان والتدوين اليومي</span>
+                <span>Daily Notes & Gratitude</span>
               </h4>
               {gratitude ? (
                 <div className="bg-gradient-to-br from-stone-50 to-white p-4.5 rounded-2.5xl border border-stone-150/40 relative">
@@ -347,7 +347,7 @@ export default function MonthlyView() {
                   </p>
                 </div>
               ) : (
-                <p className="text-xs text-stone-400 italic">لا توجد كلمات أو تأملات امتنان مدونة لهذا التاريخ.</p>
+                <p className="text-xs text-stone-400 italic">No gratitude words or notes recorded for this date.</p>
               )}
             </div>
           </div>
@@ -356,7 +356,7 @@ export default function MonthlyView() {
           <div>
             <h4 className="font-serif text-xs uppercase text-stone-400 font-bold tracking-wider flex items-center gap-1.5 mb-3">
               <Clock size={14} className="text-secondary" />
-              <span>الجدول الزمني ومواعيد الساعة ({daySchedules.length})</span>
+              <span>Simulated Timeline & Schedules ({daySchedules.length})</span>
             </h4>
             
             {daySchedules.length > 0 ? (
@@ -375,7 +375,7 @@ export default function MonthlyView() {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-stone-400 italic">لا توجد خطط زمنية أو مواعيد ومحاضرات مسجلة اليوم.</p>
+              <p className="text-xs text-stone-400 italic">No schedules or timeline tracks logged for this day.</p>
             )}
           </div>
 
@@ -384,7 +384,7 @@ export default function MonthlyView() {
             <div>
               <h4 className="font-serif text-xs uppercase text-stone-400 font-bold tracking-wider flex items-center gap-1.5 mb-2.5">
                 <CheckCircle size={14} className="text-secondary" />
-                <span>قائمة المهام ({completedTasks.length}/{dayTasks.length})</span>
+                <span>Tasks Progress ({completedTasks.length}/{dayTasks.length})</span>
               </h4>
               
               {dayTasks.length > 0 ? (
@@ -399,14 +399,14 @@ export default function MonthlyView() {
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-stone-400 italic">لم يتم تدوين مهام عمل أو واجبات لهذا اليوم.</p>
+                <p className="text-xs text-stone-400 italic">No tasks recorded for this date.</p>
               )}
             </div>
 
             <div>
               <h4 className="font-serif text-xs uppercase text-stone-400 font-bold tracking-wider flex items-center gap-1.5 mb-2.5">
                 <Heart size={14} className="text-secondary" />
-                <span>حركة العادات اليومية</span>
+                <span>Boho Habits Compliance</span>
               </h4>
               <div className="space-y-2.5">
                 {habits.map(h => {

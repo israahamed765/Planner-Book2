@@ -130,29 +130,6 @@ function DashboardLayout() {
             </button>
           </div>
 
-          {/* User Profile / Custom Identity Badge */}
-          <div className="bg-white/45 p-4 rounded-3xl border border-theme-border/40 relative overflow-hidden transition-colors duration-300">
-            <div className="absolute right-0 top-0 text-primary/5 text-6xl pointer-events-none translate-x-3 translate-y-[-10px] select-none">
-              🌿
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-secondary/15 text-secondary flex items-center justify-center font-extrabold text-xs shrink-0 uppercase border-2 border-white transition-colors duration-300 select-none">
-                {activeIdentity.slice(0, 2)}
-              </div>
-              
-              <div className="text-left min-w-0 flex-1">
-                <span className="text-[8px] uppercase font-bold tracking-wider text-secondary block leading-none">Active Workspace</span>
-                <h4 className="font-serif font-extrabold text-xs text-stone-800 truncate leading-none mt-1">
-                  {activeIdentity}
-                </h4>
-                <p className="text-[9px] text-stone-400 font-mono truncate mt-0.5 font-semibold">
-                  Insulated Sandbox
-                </p>
-              </div>
-            </div>
-          </div>
-
           {/* Search bar inside Sidebar */}
           <div className="relative mt-2">
             <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />

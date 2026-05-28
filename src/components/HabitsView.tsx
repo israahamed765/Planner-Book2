@@ -92,12 +92,12 @@ export default function HabitsView() {
       {/* Top Header Card */}
       <div className="bg-white/40 backdrop-blur-md rounded-[2.2rem] p-7 border border-white/50 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div>
-          <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Mindful Habits • متتبع العادات</span>
+          <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Mindful Habits • Habit Tracker</span>
           <h1 className="font-serif text-3xl font-bold text-stone-800 tracking-tight mt-0.5">
             Habit Logbook
           </h1>
           <p className="font-sans text-xs text-[#8C6A5C] font-semibold mt-1">
-            سجل رصد ومتابعة العادات اليومية مع رصد الالتزام لآخر 7 أيام
+            Keep track of your daily mindful routines and check your consistency over the last 7 days.
           </p>
         </div>
 

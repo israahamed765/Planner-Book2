@@ -420,14 +420,21 @@ export default function SettingsView() {
 
         {/* Right Side: Primary Info Fields, Virtual Clock & Maaloumati (8 Cols) */}
         <div className="lg:col-span-8 space-y-6">
-          {/* Workspace Identity Isolation block */}
+          {/* Workspace Identity Isolation block with Arabic & English supportive descriptors */}
           <div className="bg-white/60 backdrop-blur-md rounded-[25px] p-7 md:p-8 border border-theme-border/40 transition-colors duration-300 shadow-sm space-y-4 text-left">
-            <h3 className="font-serif text-md font-bold text-stone-800 border-b border-stone-200/50 pb-3 flex items-center gap-2">
-              <span className="text-md">🔑</span>
-              <span>Isolated Workspace Identity Key</span>
+            <h3 className="font-serif text-md font-bold text-stone-800 border-b border-stone-200/50 pb-3 flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <span className="text-md">🔑</span>
+                <span>بوابة الهوية المستقلة والنسخ السحابي</span>
+              </div>
+              <span className="text-[10px] text-stone-500 font-sans tracking-tight block">Unique Profile Identity & Cloud Safe</span>
             </h3>
-            <p className="text-[10px] text-stone-500 font-sans leading-relaxed">
-              Every guest on this app is allocated an independent sandboxed space. Swap your workspace nickname key (e.g. your email or nickname) to cleanly load or recover your dedicated tasks, habits, and diaries.
+            
+            <p className="text-xs text-stone-600 font-sans font-medium leading-relaxed">
+              لكل مستخدم هوية فريدة ومميزة تربط جميع بياناته بشكل آمن. بمجرد إدخال اسم هويتك المفضل، سيقوم النظام باسترجاع ومزامنة كافة معلوماتك (المهام، جداول الوقت، اليوميات، ومستوى العادات اليومية) مباشرة من الخادم السحابي الاحتياطي لحمايتها من أي فقدان بالخطأ.
+            </p>
+            <p className="text-[10px] text-stone-400 font-sans leading-relaxed">
+              Every user receives an insulated sandbox. Entering any unique key here instantly matches and restores all your planning logs and diaries directly from our persistent cloud node backend in case your local browser data gets cleared.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3">
@@ -439,10 +446,10 @@ export default function SettingsView() {
                   id="settings-workspace-key-input"
                   type="text"
                   required
-                  placeholder="Enter custom key (e.g. tsraathmd, guest_2)"
+                  placeholder="أدخل رمز الهوية الفريد (مثال: tsraathmd, guest)"
                   value={newIdentityInput}
                   onChange={(e) => setNewIdentityInput(e.target.value)}
-                  className="w-full border border-stone-200 bg-white rounded-xl pl-11 pr-4 py-3 text-xs text-stone-800 outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/50"
+                  className="w-full border border-stone-200 bg-white rounded-xl pl-11 pr-4 py-3 text-xs text-stone-800 outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/50 text-left"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
@@ -456,17 +463,17 @@ export default function SettingsView() {
                 onClick={handleSwitchIdentity}
                 className="px-5 py-3 bg-secondary hover:bg-[#b0533e] text-white rounded-xl text-xs font-bold shadow-sm cursor-pointer transition-all shrink-0 font-sans"
               >
-                Switch Workspace & Load
+                تحميل المزامنة والبيانات 🔑
               </button>
             </div>
             
-            <div className="bg-stone-50 p-4 rounded-2xl border border-stone-200/50 text-xs text-stone-600 flex items-center justify-between">
+            <div className="bg-[#FAF6F0] p-4.5 rounded-2xl border border-stone-200/50 text-xs text-stone-600 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <span className="text-[10.5px] uppercase font-sans font-bold text-stone-400 block tracking-wider leading-none">Current Active Key:</span>
-                <span className="font-mono font-bold text-xs text-stone-800 mt-1 block">{activeIdentity}</span>
+                <span className="text-[10.5px] uppercase font-sans font-bold text-stone-400 block tracking-wider leading-none">الهوية الفعّالة حالياً / Active Identity Key:</span>
+                <span className="font-mono font-bold text-xs text-stone-800 mt-1 block select-all">{activeIdentity}</span>
               </div>
-              <span className="text-[9px] font-mono px-3 py-1 rounded-full bg-[#E3ECE7] text-emerald-800 border border-emerald-200">
-                Data Sandbox Active
+              <span className="text-[9px] font-mono px-3 py-1 rounded-full bg-[#E3ECE7] text-emerald-800 border border-emerald-200 font-bold tracking-tight">
+                🛡️ مزامنة الخادم السحابي نشطة
               </span>
             </div>
           </div>
